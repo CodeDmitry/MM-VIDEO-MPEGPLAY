@@ -1,0 +1,79 @@
+Porting of Berkeley mpeg_play to 32 bit OS/2
+--------------------------------------------
+
+The ported source, ported executable and this file will be / have been
+sent to toe.cs.berkeley.edu. I also intend to upload this elsewhere.
+
+The target compiler was IBM C-Set++ 2.0. Turning optimisation on does not
+appear to break the decoder. Still, it doesn't seem to get it to go much
+faster either!
+
+To make everything work on FAT filesystems, I have changed all names to the
+8.3 convention. Accordingly mpeg_play is now MPEGPLAY.EXE.
+
+I always defined OS2, so that wherever I had to add a hack, I could use
+#ifdef OS2. Wherever I made a change, I put a comment with @@@ in it.
+The files os2port.h and os2port.c encompass any additional source required.
+
+I built all the code multithreaded (/Gm+). This was obviously not a requirement
+but is the way I build all my code. Single threaded librarys never seem to
+make a significant difference in performance.
+
+I wrote a makefile.os2 which makes it.
+
+I had to change the fopen(, "r") to use "rb" instead. .MPG files are binary.
+Portability could have been aided here by using "rb" etc. (on all systems
+I know the b is ignored).
+
+random() got mapped to rand() on OS/2.
+
+I #ifdef-ed various input event related stuff from XWindows.
+
+The signal handler definition must be fully prototyped for OS/2, so I did it.
+
+This port supports 320x200 at 8bpp VGA mode display, hence the -dither color
+option got removed.
+
+The easiest way for me to port the code, given its highly intricate dependency
+on XWindows for me to write a module XSTUB, which fakes up enough XWindows
+for MPEG Play to work.
+
+I defined PIXEL(p) to be p or pixel[p] depending upon whether building for OS/2
+or not. This is because in OS/2 I know in many cases pixel[i]==i, so I can
+avoid indexing the pixel table. This should make things go faster, but doesn't!
+Perhaps my machine has a decent cache size?
+
+
+Suggested improvements
+----------------------
+
+The supplied code is riddled with XWindows calls, and this is the main problem.
+Fundementally, this code creates a window of a given size, gets a palette for
+it, and writes bits to the window. A single source file could encapsule the
+XWindows dependencies and provide the entrypoints given above. This would have
+made my porting job much much easier.
+
+Use 8.3 naming convention for files. Allows easier port to OS/2 and DOS.
+
+Use ANSI fully prototyped definitions everywhere. How many machines can you
+name having only K&R C compilers and not ANSI?
+
+Use #defines OPEN_READ_ASCII, OPEN_READ_BINARY as "r" "rb" on OS/2 and DOS,
+or "r" "r" on UNIX. Use these wherever fopen() is used.
+
+
+Legal-junk
+----------
+
+This port was done in my own time with my own equiptment.
+It is nothing to do with IBM (despite my address quoted below being in IBM),
+or any other company.
+
+The basic code I started from may be "freely distributed", so are my
+porting changes, and therefore so is the final result.
+
+
+{{{ Andy Key
+
+Internet: ak@vnet.ibm.com			# Contract valid until Sept 94
+IBM-VNET: AKEY @ HVTVM5				# so addresses valid until then

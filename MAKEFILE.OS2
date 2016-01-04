@@ -1,0 +1,33 @@
+#
+# MPEG player for 32 bit OS/2
+#
+
+# C Compiler
+CC            = icc
+
+# C Compiler flags
+# Add /DANALYSIS to gather stats as you do
+# Add /DNONANSI_INCLUDES if headers are non-ANSI
+# Added /DNO_LRAND48 because no lrand48 on OS/2
+CFLAGS =	/DOS2 /Q+ /W3 /G4 /Ge+d-m+ /Sa /DNO_LRAND48 /J- /Gf+ /O+
+#CFLAGS =	/DOS2 /Q+ /W3 /G4 /Ge+d-m+ /Sa /DNO_LRAND48 /J- /Gf+ /Ti+
+
+.c.obj:
+		$(CC) /C+ $(CFLAGS) $*.c
+
+# Headers
+HDRS	      = util.h video.h decoders.h fs2.h dither.h fs4.h
+
+# Source
+SRCS	      = util.c video.c parseblo.c motionve.c decoders.c \
+		main.c gdith.c fs2.c fs2fast.c fs4.c hybrid.c hybrider.c \
+		2x2.c gray.c mono.c jrevdct.c 24bit.c util32.c ordered.c \
+		ordered2.c mb_order.c xstub.c
+
+# Object files
+OBJS =		$(SRCS:.c=.obj)
+
+# Final executable
+mpegplay.exe:	$(OBJS) mpegplay.def
+		link386 /NOI /BATCH /NOLOGO /BASE:0x10000 /EXEPACK /ALIGN:16 \
+			$(OBJS:.obj=),mpegplay.exe,nul,,mpegplay.def;

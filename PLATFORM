@@ -1,0 +1,8 @@
+This file contains notes on compiling the code for different platforms.
+
+The Makefile contains comments to support many platforms.  You should
+modify it to set the parameters for your platform.  Some common problems
+people run into are discussed below.
+
+On an IBM RS/6000 with Gt4x card (24-bit true-color X):  Add -DRS6000 to
+the CFLAGS in the Makefile.
